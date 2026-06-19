@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VORTEX STUDIO — Креатив Маркетинг · Брэнд Систем</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg2:#111;
+    --fg:#f5f5f0;
+    --muted:#888;
+    --accent:#3b82f6;
+    --accent2:#22d3ee;
+    --line:rgba(245,245,240,.12);
+    --card:#141414;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);font-family:'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body{line-height:1.4}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+
+  /* NOISE OVERLAY */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.05;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor{position:fixed;width:14px;height:14px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:10000;mix-blend-mode:difference;transition:transform .15s ease;transform:translate(-50%,-50%)}
+  .cursor.big{transform:translate(-50%,-50%) scale(3)}
+
+  /* NAV */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 40px;backdrop-filter:blur(12px);
+    background:rgba(10,10,10,.5);border-bottom:1px solid var(--line);
+  }
+  .logo{font-weight:900;letter-spacing:2px;font-size:18px;display:flex;gap:8px;align-items:center}
+  .logo .dot{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+  nav ul{display:flex;gap:28px;list-style:none;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+  nav ul a{position:relative;padding:6px 0;transition:color .3s}
+  nav ul a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);transition:width .3s}
+  nav ul a:hover::after{width:100%}
+  .cta{padding:10px 18px;border:1px solid var(--fg);border-radius:999px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:all .3s}
+  .cta:hover{background:var(--accent);border-color:var(--accent);color:#000}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:120px 40px 60px;position:relative;overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(59,130,246,.35), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(34,211,238,.25), transparent 50%);
+    filter:blur(40px);
+  }
+  .hero-tag{display:flex;justify-content:space-between;font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:40px;position:relative;z-index:2}
+  .hero h1{
+    font-size:clamp(60px,14vw,220px);font-weight:900;line-height:.9;
+    letter-spacing:-4px;position:relative;z-index:2;
+  }
+  .hero h1 span{display:block;color:transparent;-webkit-text-stroke:1px var(--fg);}
+  .hero h1 .accent{color:var(--accent);-webkit-text-stroke:0}
+  .avatars{display:flex;gap:14px;margin:40px 0;position:relative;z-index:2}
+  .avatar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:999px;font-size:12px}
+  .ball{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  .ball.b2{background:linear-gradient(135deg,#4ade80,#22d3ee)}
+  .scroll-cta{position:absolute;bottom:30px;right:40px;font-size:11px;letter-spacing:2px;display:flex;gap:14px;align-items:center;z-index:2}
+  .scroll-cta .arrow{display:inline-block;animation:bob 1.5s infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* MARQUEE */
+  .marquee{
+    overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:24px 0;background:var(--bg2);
+  }
+  .marquee-track{display:flex;gap:60px;white-space:nowrap;animation:scroll 30s linear infinite;font-size:38px;font-weight:900;letter-spacing:-1px}
+  .marquee-track span{display:inline-flex;align-items:center;gap:60px}
+  .marquee-track i{color:var(--accent);font-style:normal}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* SECTION HEAD */
+  .sec{padding:120px 40px;position:relative}
+  .sec-label{font-size:11px;letter-spacing:3px;color:var(--muted);margin-bottom:30px;text-transform:uppercase}
+  .sec-title{font-size:clamp(38px,6vw,88px);font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:40px}
+
+  /* MANIFESTO */
+  .manifesto{font-size:clamp(22px,3vw,42px);font-weight:600;line-height:1.3;max-width:1200px;letter-spacing:-.5px}
+  .manifesto .hi{color:var(--accent)}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:80px;border-top:1px solid var(--line);padding-top:40px}
+  .stat{padding:20px 0}
+  .stat .num{font-size:clamp(48px,6vw,88px);font-weight:900;letter-spacing:-3px;color:var(--accent)}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:8px;letter-spacing:1px;text-transform:uppercase}
+
+  /* SERVICES */
+  .services{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .svc{padding:50px 30px;background:var(--bg);transition:all .4s;cursor:pointer;position:relative;overflow:hidden}
+  .svc:hover{background:var(--card)}
+  .svc .num{font-size:12px;color:var(--muted);letter-spacing:2px}
+  .svc h3{font-size:32px;font-weight:900;margin:20px 0;letter-spacing:-1px}
+  .svc p{color:var(--muted);font-size:14px;line-height:1.6}
+  .svc .arrow{position:absolute;top:30px;right:30px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .3s}
+  .svc:hover .arrow{background:var(--accent);border-color:var(--accent);color:#000;transform:rotate(-45deg)}
+
+  /* WORKFLOW */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;margin-top:60px}
+  .step{padding:30px 20px;border:1px solid var(--line);border-radius:20px;position:relative;transition:all .3s}
+  .step:hover{transform:translateY(-6px);border-color:var(--accent)}
+  .step .n{font-size:13px;color:var(--accent);letter-spacing:2px;font-weight:700}
+  .step h4{font-size:24px;font-weight:900;margin:14px 0 8px}
+  .step p{color:var(--muted);font-size:13px;line-height:1.5}
+
+  /* GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:50px}
+  .tile{aspect-ratio:1;border-radius:14px;overflow:hidden;position:relative;cursor:pointer;background:var(--card)}
+  .tile svg{width:100%;height:100%;display:block}
+  .tile .meta{position:absolute;inset:auto 0 0 0;padding:14px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);transform:translateY(100%);transition:transform .4s}
+  .tile:hover .meta{transform:translateY(0)}
+  .tile .meta h5{font-size:14px;font-weight:900;letter-spacing:-.3px}
+  .tile .meta span{font-size:11px;color:var(--muted)}
+
+  /* WORK GRID */
+  .works{display:grid;grid-template-columns:repeat(2,1fr);gap:30px;margin-top:60px}
+  .work{border-radius:24px;overflow:hidden;background:var(--card);cursor:pointer;transition:all .4s;border:1px solid var(--line)}
+  .work:hover{transform:translateY(-8px);border-color:var(--accent)}
+  .work-img{aspect-ratio:16/10;position:relative;overflow:hidden}
+  .work-img svg{width:100%;height:100%}
+  .work-meta{padding:24px}
+  .work-meta .tag{font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
+  .work-meta h4{font-size:28px;font-weight:900;margin-top:10px;letter-spacing:-1px}
+
+  /* TECH STACK */
+  .tech{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:60px;max-width:1000px;margin-left:auto;margin-right:auto}
+  .chip{padding:14px 24px;border:1px solid var(--line);border-radius:999px;font-size:14px;font-weight:600;transition:all .3s;cursor:pointer}
+  .chip:hover{background:var(--fg);color:#000;transform:scale(1.05)}
+
+  /* CTA SECTION */
+  .cta-section{padding:160px 40px;text-align:center;background:linear-gradient(180deg,var(--bg),#05101a);position:relative;overflow:hidden}
+  .cta-section h2{font-size:clamp(50px,10vw,160px);font-weight:900;letter-spacing:-4px;line-height:.9}
+  .cta-section h2 span{display:block;color:transparent;-webkit-text-stroke:1px var(--fg)}
+  .cta-section .accent-text{color:var(--accent)}
+  .cta-section .big-btn{display:inline-flex;align-items:center;gap:14px;padding:24px 50px;background:var(--accent);color:#000;border-radius:999px;font-weight:900;font-size:18px;letter-spacing:1px;text-transform:uppercase;margin-top:60px;transition:all .3s}
+  .cta-section .big-btn:hover{background:var(--fg);transform:scale(1.05)}
+
+  /* FOOTER */
+  footer{padding:60px 40px 30px;border-top:1px solid var(--line);background:var(--bg2)}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+  .footer-grid h5{font-size:12px;letter-spacing:2px;color:var(--muted);margin-bottom:16px;text-transform:uppercase}
+  .footer-grid a{display:block;padding:6px 0;font-size:14px;transition:color .3s}
+  .footer-grid a:hover{color:var(--accent)}
+  .footer-bot{display:flex;justify-content:space-between;padding-top:30px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);letter-spacing:1px}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav{padding:16px 20px}
+    nav ul{display:none}
+    .hero{padding:100px 20px 40px}
+    .sec{padding:80px 20px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .services{grid-template-columns:1fr}
+    .flow{grid-template-columns:repeat(2,1fr)}
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    .works{grid-template-columns:1fr}
+    .footer-grid{grid-template-columns:1fr 1fr}
+    .scroll-cta{right:20px}
+  }
+
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="logo"><span class="dot"></span>VORTEX STUDIO</div>
+  <ul>
+    <li><a href="#about">Бидний тухай</a></li>
+    <li><a href="#services">Үйлчилгээ</a></li>
+    <li><a href="#works">Ажлууд</a></li>
+    <li><a href="#contact">Холбоо</a></li>
+  </ul>
+  <a href="#contact" class="cta">Уулзалт товлох ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tag">
+    <span>#CREATIVE STUDIO</span>
+    <span>UB · MN · 2026</span>
+  </div>
+  <h1>
+    VORTEX<br>
+    <span>STUDIO<span class="accent">.</span></span>
+  </h1>
+  <div class="avatars">
+    <div class="avatar"><span class="ball"></span><span><b>vortex.studio</b> · Бүхнийг даатга</span></div>
+    <div class="avatar"><span class="ball b2"></span><span><b>brand.designer</b> · Брэнд архитектор</span></div>
+  </div>
+  <div class="scroll-cta">
+    <span>ДЭЛГЭРЭНГҮЙ ҮЗЭХ</span>
+    <span class="arrow">↓</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>КРЕАТИВ МАРКЕТИНГ <i>✦</i> БРЭНД СИСТЕМ <i>✦</i> ВИЗУАЛ ӨГҮҮЛЭМЖ <i>✦</i> УЛААНБААТАРААС ДЭЛХИЙД <i>✦</i></span>
+    <span>КРЕАТИВ МАРКЕТИНГ <i>✦</i> БРЭНД СИСТЕМ <i>✦</i> ВИЗУАЛ ӨГҮҮЛЭМЖ <i>✦</i> УЛААНБААТАРААС ДЭЛХИЙД <i>✦</i></span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section class="sec reveal" id="about">
+  <div class="sec-label">/// МАНИФЕСТО</div>
+  <p class="manifesto">
+    <span class="hi">VORTEX</span> — мэргэжлийн өндөр түвшинд таны бизнесийг бусдад таниулна. Танай бизнесийн маркетинг, брэнд хөгжүүлэлт, лого дизайн, постер сурталчилгаа, видео контент гээд бүгдийг нэг дор шийднэ. Та зөвхөн бүтээгдэхүүнийхээ чанарт л анхаар, бусдыг нь бид хариуцна.
+  </p>
+
+  <div class="stats">
+    <div class="stat"><div class="num" data-target="120">0</div><div class="lbl">Дуусгасан төсөл</div></div>
+    <div class="stat"><div class="num" data-target="48">0</div><div class="lbl">Хамтрагч брэндүүд</div></div>
+    <div class="stat"><div class="num">∞</div><div class="lbl">Үүсгэсэн санаа</div></div>
+    <div class="stat"><div class="num" data-target="100">0</div><div class="lbl">% Сэтгэлээсээ</div></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="sec reveal" id="services">
+  <div class="sec-label">/// ҮЙЛЧИЛГЭЭ</div>
+  <h2 class="sec-title">ОРЧИН ҮЕИЙН<br>ШИНЭЛЭГ ТРЕНД.</h2>
+  <p style="max-width:700px;color:var(--muted);font-size:16px;line-height:1.6;margin-bottom:60px">
+    Зүгээр харагдах байдалд анхаарах биш — мэдрэгдэх төрх, брэндинг, дизайн, мотион, кампанит ажил — хэрэгцээтэй бүхнийг нэг дороос, бүгдийг чанарын түвшинд хийнэ.
+  </p>
+
+  <div class="services">
+    <div class="svc"><div class="arrow">↗</div><div class="num">01</div><h3>Брэндинг</h3><p>Лого, өнгөний систем, үсгийн хэв, брэндийн дуу хоолой, гайдлайн — бүхнийг нэгтгэсэн брэнд систем.</p></div>
+    <div class="svc"><div class="arrow">↗</div><div class="num">02</div><h3>Визуал дизайн</h3><p>Постер, гэрэлт самбар, савлагаа, нийгмийн сүлжээний контент — таны брэндийн харагдац.</p></div>
+    <div class="svc"><div class="arrow">↗</div><div class="num">03</div><h3>Веб хөгжүүлэлт</h3><p>Хурдан, орчин үеийн, SEO-д ээлтэй, амьд анимэйцтай вэбсайт. Next.js & React.</p></div>
+    <div class="svc"><div class="arrow">↗</div><div class="num">04</div><h3>Мотион график</h3><p>Видео контент, мотион логотип, 3D анимэйц, AI-ээр баяжуулсан бүтээлч контент.</p></div>
+    <div class="svc"><div class="arrow">↗</div><div class="num">05</div><h3>Кампанит ажил</h3><p>Маркетингийн иж бүрэн кампанит ажил — санааны шатнаас гүйцэтгэл, хэмжилт хүртэл.</p></div>
+    <div class="svc"><div class="arrow">↗</div><div class="num">06</div><h3>Контент стратеги</h3><p>Контентийн төлөвлөгөө, нийгмийн сүлжээний удирдлага, копирайт, SEO стратеги.</p></div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="sec reveal">
+  <div class="sec-label">/// АЖЛЫН УРСГАЛ</div>
+  <h2 class="sec-title">Бүтэхгүй мэт санааг ч<br>бодит болгоно.</h2>
+
+  <div class="flow">
+    <div class="step"><div class="n">01 / DISCOVER</div><h4>Илрүүлэх</h4><p>Брэнд, зорилго, зорилтот хэрэглэгчээ нарийвчилж ойлгох.</p></div>
+    <div class="step"><div class="n">02 / SKETCH</div><h4>Ноорог</h4><p>Санааг хурдан ноорог болгож, чиглэлээ батлах.</p></div>
+    <div class="step"><div class="n">03 / DESIGN</div><h4>Дизайн</h4><p>Концепцийг бүрэн боловсруулсан визуал болгох.</p></div>
+    <div class="step"><div class="n">04 / BUILD</div><h4>Бүтээх</h4><p>Код, мотион, видео — гүйцэтгэлд хөрвүүлэх.</p></div>
+    <div class="step"><div class="n">05 / SHIP</div><h4>Хүргэх</h4><p>Хэрэглэгчдэд хүргэж, үр дүнг хэмжих.</p></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="sec reveal">
+  <div class="sec-label">/// ГАЛЕРЕЙ</div>
+  <h2 class="sec-title">БҮТЭЭЛҮҮДИЙН<br>ЕРТӨНЦ.</h2>
+  <p style="max-width:700px;color:var(--muted);font-size:16px;line-height:1.6">Зураг бүр өөрийн түүхтэй. Тус бүрд нь ойртож, дэлгэрэнгүйг нь мэдрээрэй.</p>
+
+  <div class="gallery">
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect width="200" height="200" fill="url(#g1)"/><circle cx="100" cy="100" r="40" fill="#0a0a0a"/></svg>
+      <div class="meta"><h5>Өнгөний нийлэмж</h5><span>БҮТЭЭЛ · 001</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#141414"/><text x="100" y="120" font-size="80" font-weight="900" fill="#f5f5f0" text-anchor="middle">Aa</text></svg>
+      <div class="meta"><h5>Үсгийн урлал</h5><span>БҮТЭЭЛ · 002</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#4ade80"/></linearGradient></defs><rect width="200" height="200" fill="#0a0a0a"/><path d="M0,100 Q50,30 100,100 T200,100" stroke="url(#g2)" stroke-width="4" fill="none"/><path d="M0,120 Q50,50 100,120 T200,120" stroke="url(#g2)" stroke-width="4" fill="none" opacity=".5"/></svg>
+      <div class="meta"><h5>Брэндийн хөдөлгөөн</h5><span>БҮТЭЭЛ · 003</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#0a0a0a"/><circle cx="100" cy="100" r="60" fill="none" stroke="#3b82f6" stroke-width="2"/><circle cx="100" cy="100" r="45" fill="none" stroke="#3b82f6" stroke-width="2" opacity=".6"/><circle cx="100" cy="100" r="30" fill="none" stroke="#3b82f6" stroke-width="2" opacity=".3"/></svg>
+      <div class="meta"><h5>Неоны урсгал</h5><span>БҮТЭЭЛ · 004</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><defs><radialGradient id="g3"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient></defs><rect width="200" height="200" fill="url(#g3)"/></svg>
+      <div class="meta"><h5>Гэрлийн судалгаа</h5><span>БҮТЭЭЛ · 005</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#141414"/><rect x="20" y="20" width="160" height="20" fill="#3b82f6"/><rect x="20" y="50" width="100" height="10" fill="#444"/><rect x="20" y="70" width="140" height="10" fill="#444"/><rect x="20" y="100" width="160" height="80" fill="#0a0a0a" stroke="#444"/></svg>
+      <div class="meta"><h5>Интерфэйс ноорог</h5><span>БҮТЭЭЛ · 006</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#3b82f6"/><polygon points="100,40 160,160 40,160" fill="#0a0a0a"/></svg>
+      <div class="meta"><h5>Зоригтой бүтэц</h5><span>БҮТЭЭЛ · 007</span></div>
+    </div>
+    <div class="tile">
+      <svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#0a0a0a"/><g stroke="#f5f5f0" stroke-width="1" fill="none" opacity=".4"><line x1="0" y1="50" x2="200" y2="50"/><line x1="0" y1="100" x2="200" y2="100"/><line x1="0" y1="150" x2="200" y2="150"/><line x1="50" y1="0" x2="50" y2="200"/><line x1="100" y1="0" x2="100" y2="200"/><line x1="150" y1="0" x2="150" y2="200"/></g><circle cx="100" cy="100" r="50" fill="#22d3ee"/></svg>
+      <div class="meta"><h5>Сүлжээ ертөнц</h5><span>БҮТЭЭЛ · 008</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS -->
+<section class="sec reveal" id="works">
+  <div class="sec-label">/// СОНГОМОЛ БҮТЭЭЛҮҮД</div>
+  <h2 class="sec-title">БРЭНДҮҮД<br>АМЬДРАХУЙ.</h2>
+
+  <div class="works">
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><defs><linearGradient id="w1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient></defs><rect width="400" height="250" fill="url(#w1)"/><text x="200" y="140" font-size="60" font-weight="900" fill="#fff" text-anchor="middle">SHOP</text></svg></div>
+      <div class="work-meta"><div class="tag">ОНЛАЙН ХУДАЛДАА</div><h4>Онлайн худалдаа</h4></div>
+    </div>
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#0d2a1f"/><polyline points="20,200 80,150 140,170 200,100 260,130 320,60 380,90" stroke="#4ade80" stroke-width="4" fill="none"/></svg></div>
+      <div class="work-meta"><div class="tag">САНХҮҮ ПЛАТФОРМ</div><h4>Санхүүгийн удирдлага</h4></div>
+    </div>
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#141414"/><circle cx="200" cy="125" r="80" fill="none" stroke="#22d3ee" stroke-width="3"/><text x="200" y="135" font-size="30" font-weight="900" fill="#22d3ee" text-anchor="middle">STUDIO</text></svg></div>
+      <div class="work-meta"><div class="tag">БРЭНД ВЭБСАЙТ</div><h4>Студио Веб</h4></div>
+    </div>
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><defs><linearGradient id="w2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><rect width="400" height="250" fill="url(#w2)"/><text x="200" y="145" font-size="48" font-weight="900" fill="#fff" text-anchor="middle">CAMPAIGN</text></svg></div>
+      <div class="work-meta"><div class="tag">КАМПАНИТ АЖИЛ</div><h4>Маркетинг</h4></div>
+    </div>
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#0a0a0a"/><g fill="none" stroke="#22d3ee" stroke-width="2"><circle cx="200" cy="125" r="40"/><circle cx="200" cy="125" r="60" opacity=".6"/><circle cx="200" cy="125" r="80" opacity=".3"/></g><text x="200" y="135" font-size="20" font-weight="900" fill="#22d3ee" text-anchor="middle">AI</text></svg></div>
+      <div class="work-meta"><div class="tag">AI ШИЙДЭЛ</div><h4>Хиймэл оюун</h4></div>
+    </div>
+    <div class="work">
+      <div class="work-img"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#3b82f6"/><rect x="80" y="50" width="240" height="150" fill="#0a0a0a"/><text x="200" y="140" font-size="40" font-weight="900" fill="#3b82f6" text-anchor="middle">VORTEX</text></svg></div>
+      <div class="work-meta"><div class="tag">БРЭНД СИСТЕМ</div><h4>Брэнд архитектур</h4></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section class="sec reveal" style="text-align:center">
+  <div class="sec-label">/// ИТГЭДЭГ ХЭРЭГСЭЛ</div>
+  <h2 class="sec-title">ШИЛДГИЙН СОНГОЛТ.<br>СЭТГЭЛЭЭР БҮТЭЭСЭН.</h2>
+
+  <div class="tech">
+    <div class="chip">React</div>
+    <div class="chip">Next.js</div>
+    <div class="chip">TypeScript</div>
+    <div class="chip">Tailwind</div>
+    <div class="chip">Figma</div>
+    <div class="chip">Node.js</div>
+    <div class="chip">Postgres</div>
+    <div class="chip">GitHub</div>
+    <div class="chip">Vercel</div>
+    <div class="chip">Motion</div>
+    <div class="chip">Design</div>
+    <div class="chip">AI</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal" id="contact">
+  <div class="sec-label" style="color:var(--accent)">/// ХОЛБОГДОХ</div>
+  <h2>
+    <span class="accent-text">ТАНЫ БРЭНДИЙГ</span>
+    <span>АМЬДРУУЛЪЯ.</span>
+  </h2>
+  <p style="max-width:700px;margin:40px auto 0;color:var(--muted);font-size:16px;line-height:1.7">
+    Шинэ брэнд эхлүүлж байна уу? Хуучин брэндээ шинэчлэх үү? Кампанит ажил, контент, эсвэл бүтээлч санаагаа хуваалцах уу — алийг ч таны төлөө бэлэн.
+  </p>
+  <a href="mailto:hello@vortex.studio" class="big-btn">hello@vortex.studio →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="logo" style="margin-bottom:20px"><span class="dot"></span>VORTEX STUDIO</div>
+      <p style="color:var(--muted);font-size:14px;max-width:300px;line-height:1.6">Креатив студио. Улаанбаатараас дэлхийд. Сэтгэлээр бүтээсэн брэнд систем.</p>
+    </div>
+    <div>
+      <h5>Меню</h5>
+      <a href="#about">Бидний тухай</a>
+      <a href="#services">Үйлчилгээ</a>
+      <a href="#works">Ажлууд</a>
+      <a href="#contact">Холбоо</a>
+    </div>
+    <div>
+      <h5>Сошиал</h5>
+      <a href="#">GitHub</a>
+      <a href="#">Twitter</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Instagram</a>
+    </div>
+    <div>
+      <h5>Холбоо</h5>
+      <a href="mailto:hello@vortex.studio">hello@vortex.studio</a>
+      <a href="#">+976 9999-9999</a>
+      <a href="#">Улаанбаатар, MN</a>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <span>© 2026 VORTEX СТУДИО · УЛААНБААТАР</span>
+    <span>СЭТГЭЛЭЭР БҮТЭЭСЭН ✦ ДЭЭГҮҮР ↑</span>
+  </div>
+</footer>
+
+<script>
+  // CUSTOM CURSOR
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, .svc, .tile, .work, .chip, .cta, .big-btn').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+
+  // REVEAL
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // STATS COUNTER
+  const counterIO = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      const target = +el.dataset.target;
+      let cur = 0;
+      const step = Math.max(1, Math.floor(target/60));
+      const tick = () => {
+        cur += step;
+        if(cur >= target){ el.textContent = target + (target===100?'%':'+'); return; }
+        el.textContent = cur;
+        requestAnimationFrame(tick);
+      };
+      tick();
+      counterIO.unobserve(el);
+    });
+  },{threshold:.5});
+  document.querySelectorAll('.num[data-target]').forEach(el=>counterIO.observe(el));
+
+  // SMOOTH SCROLL
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const tgt = document.querySelector(a.getAttribute('href'));
+      if(tgt){ e.preventDefault(); tgt.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+</script>
+
+</body>
+</html>
